@@ -1,0 +1,264 @@
+<?php
+$status = $_GET['status'] ?? '';
+$message = '';
+$alertType = '';
+
+if ($status === 'success') {
+    $message = 'Thank you! Your suggestion has been submitted successfully.';
+    $alertType = 'success';
+} elseif ($status === 'error') {
+    $code = $_GET['message'] ?? '';
+    if ($code === 'invalid_email') {
+        $message = 'Please enter a valid email address.';
+    } else {
+        $message = 'Please fill in all required fields and try again.';
+    }
+    $alertType = 'error';
+}
+?>
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suggestion Form</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .suggestion-container {
+            width: 100%;
+            max-width: 1050px;
+            background: #050505;
+            border: 1px solid rgba(255, 0, 98, 0.25);
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 0 25px rgba(255, 0, 98, 0.08);
+        }
+
+        .form-message {
+            margin-bottom: 28px;
+            padding: 18px 24px;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-message.success {
+            background: rgba(38, 198, 218, 0.14);
+            color: #26c6da;
+            border: 1px solid rgba(38, 198, 218, 0.35);
+        }
+
+        .form-message.error {
+            background: rgba(255, 0, 98, 0.14);
+            color: #ff2d7d;
+            border: 1px solid rgba(255, 0, 98, 0.35);
+        }
+
+        .form-message span {
+            font-size: 20px;
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .form-title span {
+            color: #ff0062;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .form-title h2 {
+            color: #fff;
+            font-size: 42px;
+            margin-top: 12px;
+            font-weight: 700;
+        }
+
+        .form-title p {
+            color: #8f8f8f;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 28px;
+        }
+
+        .input-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-box label {
+            color: #fff;
+            margin-bottom: 12px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .input-box input,
+        .input-box select,
+        .input-box textarea {
+            width: 100%;
+            background: #161616;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 18px 20px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s ease;
+        }
+
+        .input-box input::placeholder,
+        .input-box textarea::placeholder {
+            color: #6f6f6f;
+        }
+
+        .input-box input:focus,
+        .input-box select:focus,
+        .input-box textarea:focus {
+            border-color: #ff0062;
+            box-shadow: 0 0 12px rgba(255, 0, 98, 0.2);
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(90deg, #ff0062, #ff2d7d);
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 0, 98, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .suggestion-container {
+                padding: 30px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .form-title h2 {
+                font-size: 30px;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="suggestion-container">
+        <?php if ($message): ?>
+            <div class="form-message <?= $alertType ?>">
+                <span><?= $alertType === 'success' ? '✓' : '⚠' ?></span>
+                <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="form-title">
+            <span>Feedback</span>
+            <h2>Suggestion Form</h2>
+            <p>We value your ideas and suggestions</p>
+        </div>
+
+        <form action="sugestion-submit.php" method="post">
+            <div class="form-grid">
+                <div class="input-box">
+                    <label>First Name *</label>
+                    <input type="text" name="firstname" placeholder="Enter first name" required />
+                </div>
+
+                <div class="input-box">
+                    <label>Last Name *</label>
+                    <input type="text" name="lastname" placeholder="Enter last name" required />
+                </div>
+
+                <div class="input-box">
+                    <label>Email Address *</label>
+                    <input type="email" name="email" placeholder="Enter email address" required />
+                </div>
+
+                <div class="input-box">
+                    <label>Phone Number</label>
+                    <input type="text" name="phone" placeholder="Enter phone number" />
+                </div>
+
+                <div class="input-box full-width">
+                    <label>Suggestion Category</label>
+                    <select name="category">
+                        <option>Website Improvement</option>
+                        <option>Feature Request</option>
+                        <option>Complaint</option>
+                        <option>Event Suggestion</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="input-box full-width">
+                    <label>Your Suggestion *</label>
+                    <textarea name="suggestion" rows="6" placeholder="Write your suggestion here..." required></textarea>
+                </div>
+
+                <div class="input-box full-width">
+                    <label>Additional Comments</label>
+                    <textarea name="comments" rows="5" placeholder="Any additional information..."></textarea>
+                </div>
+
+                <div class="full-width">
+                    <button type="submit" class="submit-btn">Submit Suggestion</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>
